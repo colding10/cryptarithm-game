@@ -24,6 +24,9 @@ class CipherMonoSub:
         self.create_alphabet_mapping()
 
     def create_alphabet_mapping(self) -> None:
+        """
+        generates the alphabet mapping
+        """
         alphabet_reordered = list(ascii_uppercase)
         random.shuffle(alphabet_reordered)
 

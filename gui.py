@@ -7,8 +7,8 @@ customtkinter.set_default_color_theme(
     "green"
 )  # Themes: "blue" (standard), "green", "dark-blue"
 
-rows = 10
-cols = 10
+ROWS = 10
+COLS = 10
 
 
 class App(customtkinter.CTk):
@@ -60,12 +60,12 @@ class App(customtkinter.CTk):
                 customtkinter.CTkLabel(
                     self.text_frame, bg_color="dark green", text="Joe"
                 )
-                for x in range(rows)
+                for x in range(ROWS)
             ]
-            for y in range(cols)
+            for y in range(COLS)
         ]
-        for x in range(rows):
-            for y in range(cols):
+        for x in range(ROWS):
+            for y in range(COLS):
                 self.labels[x][y].grid(row=x, column=y, sticky="nsew")
 
         # set default values

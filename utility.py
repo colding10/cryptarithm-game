@@ -15,6 +15,15 @@ def get_random_quote(category="") -> QuoteType:
         raise Exception("Error:", response.status_code, response.text)
 
 def get_quote_max_length(max_length=1000) -> QuoteType:
+    """
+    get a quote with an maximum length using Api-Ninjas
+
+    Args:
+        max_length (int, optional): the maximum length. Defaults to 1000.
+
+    Returns:
+        QuoteType: a dictionary with information about the quotes
+    """
     while True:
         quote = get_random_quote()
         if len(quote["quote"]) <= max_length:
