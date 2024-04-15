@@ -13,7 +13,9 @@ def output_frequency_table(cipher: CipherMonoSub) -> None:
     for char in ascii_uppercase:
         table.add_column(char, style="magenta", justify="center", min_width=2)
 
-    table.add_row("Frequency", *[str(x) if x else "" for x in cipher.frequency.values()])
+    table.add_row(
+        "Frequency", *[str(x) if x else "" for x in cipher.frequency.values()]
+    )
     table.add_row("Replacement", *user_mapping.values())
 
     console.print(table, justify="center")
@@ -26,13 +28,14 @@ def output_cipher_plaintext(cipher: CipherMonoSub) -> None:
             [user_mapping[c] if c in ascii_uppercase else c for c in cipher.cipher_text]
         ),
         justify="center",
-        end="", style=("bold green" if solved else "")
+        end="",
+        style=("bold green" if solved else ""),
     )
 
 
 def mainloop() -> None:
     console.clear()
-    
+
     while True:
         try:
             output_cipher_plaintext(cipher)
@@ -43,8 +46,16 @@ def mainloop() -> None:
             a, b = inp.split("=")
             user_mapping[a.upper()] = b.upper()
             console.clear()
-            
-            if "".join([user_mapping[c] if c in ascii_uppercase else c for c in cipher.cipher_text]) == cipher.plain_text:
+
+            if (
+                "".join(
+                    [
+                        user_mapping[c] if c in ascii_uppercase else c
+                        for c in cipher.cipher_text
+                    ]
+                )
+                == cipher.plain_text
+            ):
                 solved = True
         except KeyboardInterrupt:
             return

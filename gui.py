@@ -1,86 +1,132 @@
 import tkinter
+import tkinter.font
 import tkinter.messagebox
-import customtkinter
-
-customtkinter.set_appearance_mode("Dark")  # Modes: "System" (standard), "Dark", "Light"
-customtkinter.set_default_color_theme(
-    "green"
-)  # Themes: "blue" (standard), "green", "dark-blue"
-
-ROWS = 10
-COLS = 10
 
 
-class App(customtkinter.CTk):
+ROWS = 40
+
+
+class App(tkinter.Tk):
     def __init__(self):
         super().__init__()
 
         self.title("Cryptarithms by Colin Ding")
         self.geometry(f"{1100}x{580}")
 
-        # create sidebar frame with widgets
-        self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
-        self.sidebar_frame.grid(row=0, column=0, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(4, weight=1)
+        self.text_frame = tkinter.Frame(self)
+        self.text_frame.pack(fill="both", side="right", expand=True)
 
-        self.text_frame = customtkinter.CTkFrame(self)
-        self.text_frame.grid(row=0, column=1, sticky="nsew")
+        # Initialize list to hold labels and input spaces
+        self.labels = []
+        self.input_spaces = []
+        self.input_string = ""
 
-        self.logo_label = customtkinter.CTkLabel(
-            self.sidebar_frame,
-            text="Cryptarithms",
-            font=customtkinter.CTkFont(size=20, weight="bold"),
-        )
-        self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+    def display_string_with_input(self, input_string: str):
+        for label in self.labels:
+            label.destroy()
+        for input_space in self.input_spaces:
+            input_space.destroy()
 
-        self.appearance_mode_label = customtkinter.CTkLabel(
-            self.sidebar_frame, text="Appearance Mode:", anchor="w"
-        )
-        self.appearance_mode_label.grid(row=5, column=0, padx=20, pady=(10, 0))
-        self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(
-            self.sidebar_frame,
-            values=["Light", "Dark", "System"],
-            command=self.change_appearance_mode_event,
-        )
-        self.appearance_mode_optionemenu.grid(row=6, column=0, padx=20, pady=(10, 10))
-        self.scaling_label = customtkinter.CTkLabel(
-            self.sidebar_frame, text="UI Scaling:", anchor="w"
-        )
-        self.scaling_label.grid(row=7, column=0, padx=20, pady=(10, 0))
-        self.scaling_optionemenu = customtkinter.CTkOptionMenu(
-            self.sidebar_frame,
-            values=["80%", "90%", "100%", "110%", "120%"],
-            command=self.change_scaling_event,
-        )
-        self.scaling_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 20))
+        self.labels = []
+        self.input_spaces = []
 
-        # set up the actual interactive space
-        self.labels = [
-            [
-                customtkinter.CTkLabel(
-                    self.text_frame, bg_color="dark green", text="Joe"
+        self.input_string = input_string
+
+        # Create labels and input spaces for each character in the input string
+        for i, char in enumerate(input_string):
+            col_index = i % ROWS
+            row_index = i // ROWS
+
+            # Create label for character
+            label = tkinter.Label(self.text_frame, text=char, font=("FiraMono Nerd Font", 24))
+            label.grid(row=row_index * 2, column=col_index, sticky="nsew")
+            self.labels.append(label)
+
+            # If character is a letter, create input space
+            if char.isalpha():
+
+                def focus_in_handler(event, c=char):
+                    self.on_focus_in(event, c)
+
+                def key_pressed_handler(event, c=char):
+                    typed_char = event.char.upper()
+                    curridx = self.input_spaces.index(event.widget)
+
+                    if event.keysym_num == 65363:
+                        for i in range(curridx + 1, len(self.input_spaces)):
+                            if not isinstance(self.input_spaces[i], tkinter.Entry):
+                                continue
+                            if not self.input_spaces[i].get().isalpha():
+                                self.input_spaces[i].focus_set()
+                                return "break"
+                    if event.keysym_num == 65361:
+                        for i in range(curridx - 1, -1, -1):
+                            if not isinstance(self.input_spaces[i], tkinter.Entry):
+                                continue
+                            if not self.input_spaces[i].get().isalpha():
+                                self.input_spaces[i].focus_set()
+                                return "break"
+                    if typed_char.isalpha():
+                        event.widget.delete(0, "end")
+                        event.widget.insert("end", typed_char)
+
+                        for input_space in self.input_spaces:
+                            if (
+                                isinstance(input_space, tkinter.Entry)
+                                and input_space.cget("bg") == "yellow"
+                            ):
+                                input_space.delete(0, "end")
+                                input_space.insert("end", typed_char)
+
+                        for i in range(
+                            curridx + 1, len(self.input_spaces)
+                        ):  # TODO: make it go back to beginning if none after
+                            if not isinstance(self.input_spaces[i], tkinter.Entry):
+                                continue
+                            if not self.input_spaces[i].get().isalpha():
+                                self.input_spaces[i].focus_set()
+                                break
+
+                    return "break"
+
+                input_space = tkinter.Entry(
+                    self.text_frame,
+                    width=1,
+                    font=("FiraMono Nerd Font", 24),
+                    bg="light gray",
+                    fg="black",
+                    justify="center"
                 )
-                for x in range(ROWS)
-            ]
-            for y in range(COLS)
-        ]
-        for x in range(ROWS):
-            for y in range(COLS):
-                self.labels[x][y].grid(row=x, column=y, sticky="nsew")
 
-        # set default values
+                input_space.bind("<FocusIn>", focus_in_handler)
+                input_space.bind("<Key>", key_pressed_handler)
 
-        self.appearance_mode_optionemenu.set("Dark")
-        self.scaling_optionemenu.set("100%")
+                input_space.grid(
+                    row=(row_index * 2) + 1, column=col_index, sticky="nsew"
+                )
 
-    def change_appearance_mode_event(self, new_appearance_mode: str):
-        customtkinter.set_appearance_mode(new_appearance_mode)
+                self.input_spaces.append(input_space)
+            else:
+                self.input_spaces.append(None)
 
-    def change_scaling_event(self, new_scaling: str):
-        new_scaling_float = int(new_scaling.replace("%", "")) / 100
-        customtkinter.set_widget_scaling(new_scaling_float)
+    def on_focus_in(self, event: tkinter.Event, bound_char: str = ""):
+        for inp in self.input_spaces:
+            if isinstance(inp, tkinter.Entry):
+                inp.config({"bg": "light gray"})
+
+        for i in range(len(self.input_spaces)):
+            if (
+                self.labels[i].cget("text").strip().upper()
+                == bound_char.strip().upper()
+            ):
+                self.input_spaces[i].config({"bg": "yellow"})
+
+        event.widget.config({"bg": "orange"})
 
 
 if __name__ == "__main__":
     app = App()
+    app.display_string_with_input(
+        "SAMPLESTRING PEOPLE ANYWHERE IS THE" * 5
+    )  # Replace "Sample String" with desired input
     app.mainloop()

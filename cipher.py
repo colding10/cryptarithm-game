@@ -15,7 +15,7 @@ class CipherMonoSub:
     frequency: Dict[str, int]
 
     def __init__(self) -> None:
-        self.quote = get_quote_max_length(175)
+        self.quote = get_random_quote()
         self.quote_text = self.quote["quote"]
         self.plain_text = self.quote["quote"].upper()
         self.author = self.quote["author"]
