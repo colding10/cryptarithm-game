@@ -1,5 +1,8 @@
-import requests
 from typing import Dict
+from string import ascii_uppercase
+
+import random
+import requests
 
 API_KEY = "2wubG+f3rTK+ElC0Nwmb4w==YK0iGR3pcTfZx5Jd"
 
@@ -29,3 +32,23 @@ def get_quote_max_length(max_length=1000) -> QuoteType:
         quote = get_random_quote()
         if len(quote["quote"]) <= max_length:
             return quote
+
+
+def create_alphabet_mapping() -> Dict[str, str]:
+    available = list(ascii_uppercase)
+    mapping = dict()
+
+    for char in ascii_uppercase:
+        add_back = False
+        if char in available:
+            available.remove(char)
+            add_back = True
+
+        chosen = random.choice(available)
+        available.remove(chosen)
+        mapping[char] = chosen
+
+        if add_back:
+            available.append(char)
+
+    return mapping
