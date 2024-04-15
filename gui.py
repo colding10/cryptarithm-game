@@ -34,7 +34,6 @@ class App(tkinter.Tk):
         print("Initalized Tkinter Application")
 
     def display_string_with_input(self, input_string: str):
-        # TODO: do not flow words across lines
         for label in self.labels:
             label.destroy()
         for input_space in self.input_spaces:
