@@ -1,9 +1,9 @@
 """This module defines Tkinter-derived classes that are used to control the GUI and user input"""
 
+import textwrap
 import tkinter
 import tkinter.font
 import tkinter.messagebox
-import textwrap
 
 from string import ascii_uppercase
 
@@ -15,6 +15,7 @@ TEXTCOLOR = "black"
 
 class App(tkinter.Tk):
     """This class is a subclass of tkinter.Tk, and contains functions to set up the Tk interface"""
+
     def __init__(self):
         super().__init__()
 
@@ -31,12 +32,13 @@ class App(tkinter.Tk):
         # Initialize list to hold labels and input spaces
         self.labels = []
         self.input_spaces = []
-        self.freq_table_labels = [[None for _ in range(27)] for _ in range(3)]
+        self.freq_table_labels = [[tkinter.Label for _ in range(27)] for _ in range(3)]
         self.input_string = ""
 
         print("Initalized Tkinter Application")
 
     def display_string_with_input(self, input_string: str):
+        """Modifys the widgets to match the input string to display"""
         for label in self.labels:
             label.destroy()
         for input_space in self.input_spaces:
@@ -72,57 +74,19 @@ class App(tkinter.Tk):
                         typed_char = event.char.upper()
                         curridx = self.input_spaces.index(event.widget)
                         if event.keysym_num == 65288:
-                            for input_space in self.input_spaces:
-                                if (
-                                    isinstance(input_space, tkinter.Entry)
-                                    and input_space.cget("bg") == "yellow"
-                                ):
-                                    input_space.delete(0, "end")
-
+                            self.clear_yellow_entries()
                             event.widget.delete(0, "end")
-
                             self.freq_table_labels[2][
                                 ascii_uppercase.index(c) + 1
                             ].config({"text": ""})
-                            return "break"
-
-                        if event.keysym_num == 65363:
-                            for i in range(curridx + 1, len(self.input_spaces)):
-                                if not isinstance(self.input_spaces[i], tkinter.Entry):
-                                    continue
-                                self.input_spaces[i].focus_set()
-                                return "break"
-                        if event.keysym_num == 65361:
-                            for i in range(curridx - 1, -1, -1):
-                                if not isinstance(self.input_spaces[i], tkinter.Entry):
-                                    continue
-                                self.input_spaces[i].focus_set()
-                                return "break"
-                        if typed_char.isalpha():
+                        elif event.keysym_num in [65363, 65361]:
+                            direction = 1 if event.keysym_num == 65363 else -1
+                            self.move_focus(curridx, direction)
+                        elif typed_char.isalpha():
                             event.widget.delete(0, "end")
                             event.widget.insert("end", typed_char)
-
-                            for input_space in self.input_spaces:
-                                if (
-                                    isinstance(input_space, tkinter.Entry)
-                                    and input_space.cget("bg") == "yellow"
-                                ):
-                                    input_space.delete(0, "end")
-                                    input_space.insert("end", typed_char)
-
-                            for i in range(
-                                curridx + 1, len(self.input_spaces)
-                            ):  # TODO: make it go back to beginning if none after
-                                if not isinstance(self.input_spaces[i], tkinter.Entry):
-                                    continue
-                                if not self.input_spaces[i].get().isalpha():
-                                    self.input_spaces[i].focus_set()
-                                    break
-
-                            self.freq_table_labels[2][
-                                ascii_uppercase.index(c) + 1
-                            ].config({"text": typed_char})
-
+                            self.update_yellow_entries(event, typed_char, c)
+                            self.move_focus(curridx, 1, True)
                         return "break"
 
                     input_space = tkinter.Entry(
@@ -145,7 +109,46 @@ class App(tkinter.Tk):
                 else:
                     self.input_spaces.append(None)
 
+    def clear_yellow_entries(self):
+        """Removes the text in all yellow input spaces"""
+        for input_space in self.input_spaces:
+            if (
+                isinstance(input_space, tkinter.Entry)
+                and input_space.cget("bg") == "yellow"
+            ):
+                input_space.delete(0, "end")
+
+    def update_yellow_entries(self, event, typed_char, c):
+        """Add the text to all yellow entries"""
+        event.widget.delete(0, "end")
+        event.widget.insert("end", typed_char)
+        self.clear_yellow_entries()
+        for input_space in self.input_spaces:
+            if (
+                isinstance(input_space, tkinter.Entry)
+                and input_space.cget("bg") == "yellow"
+            ):
+                input_space.delete(0, "end")
+                input_space.insert("end", typed_char)
+        self.freq_table_labels[2][ascii_uppercase.index(c) + 1].config(
+            {"text": typed_char}
+        )
+
+    def move_focus(self, curridx: int, direction: int, skip_full: bool = False):
+        """Moves the focus in one direction or another"""
+        for i in range(
+            curridx + direction,
+            0 if direction == -1 else len(self.input_spaces),
+            direction,
+        ):
+            if isinstance(self.input_spaces[i], tkinter.Entry) and (
+                not self.input_spaces[i].get().isalpha() if skip_full else True
+            ):
+                self.input_spaces[i].focus_set()
+                break
+
     def setup_frequency_table(self, freqs: dict[str, int]):
+        """Setups the frequency table that is made of Labels"""
         table = [["" for _ in range(27)] for _ in range(3)]
         table[1][0] = "Frequency"
         table[2][0] = "Replacement"
@@ -177,6 +180,7 @@ class App(tkinter.Tk):
                 self.freq_table_labels[i][j] = e
 
     def on_freq_label_pressed(self, event: tkinter.Event):
+        """A tkinter handler that focuses and highlights letters when a label is pressed"""
         widget = event.widget
         idx = -1
         for i in range(3):
@@ -193,6 +197,7 @@ class App(tkinter.Tk):
                 self.input_spaces[i].focus_set()
 
     def on_focus_in(self, event: tkinter.Event, bound_char: str = ""):
+        """A tkinter handler that highlights others with same letter when focused on"""
         for inp in self.input_spaces:
             if isinstance(inp, tkinter.Entry):
                 inp.config({"bg": "light gray"})
