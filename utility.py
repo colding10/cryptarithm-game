@@ -10,12 +10,11 @@ QuoteType = Dict[str, str]
 
 
 def get_random_quote(category="") -> QuoteType:
-    api_url = "https://api.api-ninjas.com/v1/quotes?category={}".format(category)
+    api_url = f"https://api.api-ninjas.com/v1/quotes?category={category}"
     response = requests.get(api_url, headers={"X-Api-Key": API_KEY})  # type: ignore
     if response.status_code == requests.codes.ok:
         return response.json()[0]
-    else:
-        raise Exception("Error:", response.status_code, response.text)
+    raise requests.HTTPError("Error:", response.status_code, response.text)
 
 
 def get_quote_max_length(max_length=1000) -> QuoteType:
@@ -36,7 +35,7 @@ def get_quote_max_length(max_length=1000) -> QuoteType:
 
 def create_alphabet_mapping() -> Dict[str, str]:
     available = list(ascii_uppercase)
-    mapping = dict()
+    mapping = {}
 
     for char in ascii_uppercase:
         add_back = False

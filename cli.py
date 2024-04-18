@@ -1,6 +1,7 @@
+"""This module uses the rich library to create a cli. NOT IN USE"""
 from rich.console import Console
 from rich.table import Table
-from cipher import *
+from cipher import CipherMonoSub, CipherAristocrat
 from string import ascii_uppercase
 
 console = Console()

@@ -1,3 +1,5 @@
+"""This module defines Tkinter-derived classes that are used to control the GUI and user input"""
+
 import tkinter
 import tkinter.font
 import tkinter.messagebox
@@ -12,6 +14,7 @@ TEXTCOLOR = "black"
 
 
 class App(tkinter.Tk):
+    """This class is a subclass of tkinter.Tk, and contains functions to set up the Tk interface"""
     def __init__(self):
         super().__init__()
 
@@ -51,7 +54,10 @@ class App(tkinter.Tk):
             for col_index, char in enumerate(row):
                 # Create label for character
                 label = tkinter.Label(
-                    self.text_frame, text=char, font=("FiraMono Nerd Font", 24), bg=BGCOLOR
+                    self.text_frame,
+                    text=char,
+                    font=("FiraMono Nerd Font", 24),
+                    bg=BGCOLOR,
                 )
                 label.grid(row=row_index * 2, column=col_index, sticky="nsew")
                 self.labels.append(label)
@@ -75,9 +81,9 @@ class App(tkinter.Tk):
 
                             event.widget.delete(0, "end")
 
-                            self.freq_table_labels[2][ascii_uppercase.index(c) + 1].config(
-                                {"text": ""}
-                            )
+                            self.freq_table_labels[2][
+                                ascii_uppercase.index(c) + 1
+                            ].config({"text": ""})
                             return "break"
 
                         if event.keysym_num == 65363:
@@ -113,9 +119,9 @@ class App(tkinter.Tk):
                                     self.input_spaces[i].focus_set()
                                     break
 
-                            self.freq_table_labels[2][ascii_uppercase.index(c) + 1].config(
-                                {"text": typed_char}
-                            )
+                            self.freq_table_labels[2][
+                                ascii_uppercase.index(c) + 1
+                            ].config({"text": typed_char})
 
                         return "break"
 
