@@ -7,12 +7,16 @@ import tkinter.messagebox
 
 from string import ascii_uppercase
 
+from cipher import CipherAristocrat
+from popups import ask_play_again
+
 CHARS_IN_ROW = 40
 BGCOLOR = "#3d2d62"
 FGCOLOR = "#97a1b5"
 TEXTCOLOR = "#c7d1d3"
 NORMAL_HL = "#fcaa8f"
 VIVID_HL = "#e89d6d"
+
 
 class App(tkinter.Tk):
     """This class is a subclass of tkinter.Tk, and contains functions to set up the Tk interface"""
@@ -30,11 +34,17 @@ class App(tkinter.Tk):
         self.freq_table_frame = tkinter.Frame(self, bg=BGCOLOR)
         self.freq_table_frame.pack(side="bottom", expand=True, padx=5, pady=5)
 
+        # intialize the cipher
+        self.cipher = CipherAristocrat()
+
         # Initialize list to hold labels and input spaces
         self.labels = []
         self.input_spaces = []
         self.freq_table_labels = [[tkinter.Label for _ in range(27)] for _ in range(3)]
-        self.input_string = ""
+        self.input_string = self.cipher.cipher_text
+
+        self.display_string_with_input(self.input_string)
+        self.setup_frequency_table(self.cipher.frequency)
 
         print("Initalized Tkinter Application")
 
@@ -88,6 +98,8 @@ class App(tkinter.Tk):
                             event.widget.insert("end", typed_char)
                             self.update_highlighted_entries(event, typed_char, c)
                             self.move_focus(curridx, 1, True)
+
+                        self.check_win()
                         return "break"
 
                     input_space = tkinter.Entry(
@@ -211,6 +223,29 @@ class App(tkinter.Tk):
                 inp.config({"bg": NORMAL_HL})
 
         event.widget.config({"bg": VIVID_HL})
+
+    def check_win(self):
+        """Checks for win and asks for play again if won"""
+
+        won = True
+        inverse_mapping = dict(
+            zip(self.cipher.mapping.values(), self.cipher.mapping.keys())
+        )
+
+        for i in range(1, 27):
+            if self.cipher.frequency[ascii_uppercase[i - 1]]:
+                if (
+                    self.freq_table_labels[2][i].cget("text")
+                    != inverse_mapping[ascii_uppercase[i - 1]]
+                ):
+                    won = False
+                    break
+
+        if won:
+            if not ask_play_again():
+                self.destroy()
+            else:
+                self.__init__()
 
 
 if __name__ == "__main__":

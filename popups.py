@@ -1,7 +1,6 @@
 """This module defines popup functions to ask and get user response"""
 
-import tkinter.messagebox as messagebox
-
+from tkinter import messagebox
 
 WINNING_MESSAGE = (
     """You won! Congratulations on solving the cipher! Would you like to play again?"""

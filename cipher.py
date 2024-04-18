@@ -1,7 +1,8 @@
 """This module defines the classes for each cipher type"""
 
 from string import ascii_uppercase
-from utility import QuoteType, get_quote_max_length, create_alphabet_mapping
+
+from utility import create_alphabet_mapping, get_quote_max_length, QuoteType
 
 
 class CipherMonoSub:
@@ -25,6 +26,8 @@ class CipherMonoSub:
         self.author = self.quote["author"]
 
         print(f"Initalized Cipher with quote of length {len(self.quote_text)}")
+        print(f"Got cipher plaintext as {self.plain_text}")
+        print(f"This quote is by {self.author}")
         self.create_alphabet_mapping()
 
     def create_alphabet_mapping(self) -> None:

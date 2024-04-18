@@ -42,4 +42,5 @@ def create_alphabet_mapping() -> dict[str, str]:
                 letters[next_index],
             )
         mapping[chr(65 + i)] = letters[next_index]
+    mapping = dict(sorted(zip(mapping.keys(), mapping.values())))
     return mapping
