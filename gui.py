@@ -11,9 +11,9 @@ from cipher import CipherAristocrat
 from popups import ask_play_again
 
 CHARS_IN_ROW = 40
-BGCOLOR = "#3d2d62"
-FGCOLOR = "#97a1b5"
-TEXTCOLOR = "#c7d1d3"
+BGCOLOR = "#a6b1e1"
+FGCOLOR = "#dcd6f7"
+TEXTCOLOR = "#424874"
 NORMAL_HL = "#fcaa8f"
 VIVID_HL = "#e89d6d"
 
@@ -26,12 +26,16 @@ class App(tkinter.Tk):
 
         self.title("Cryptarithms by Colin Ding")
         self.geometry(f"{1100}x{580}")
-        self.config({"bg": BGCOLOR})
+        self.configure({"bg": BGCOLOR})
 
-        self.text_frame = tkinter.Frame(self, bg=BGCOLOR)
+        self.text_frame = tkinter.Frame(
+            self, bg=BGCOLOR, highlightthickness=0, borderwidth=0
+        )
         self.text_frame.pack(fill="both", side="top", expand=True, padx=5, pady=5)
 
-        self.freq_table_frame = tkinter.Frame(self, bg=BGCOLOR)
+        self.freq_table_frame = tkinter.Frame(
+            self, bg=BGCOLOR, highlightthickness=0, borderwidth=0
+        )
         self.freq_table_frame.pack(side="bottom", expand=True, padx=5, pady=5)
 
         # intialize the cipher
@@ -71,6 +75,8 @@ class App(tkinter.Tk):
                     text=char,
                     font=("FiraMono Nerd Font", 24),
                     bg=BGCOLOR,
+                    highlightthickness=0,
+                    borderwidth=0,
                 )
                 label.grid(row=row_index * 2, column=col_index, sticky="nsew")
                 self.labels.append(label)
@@ -109,13 +115,19 @@ class App(tkinter.Tk):
                         bg=FGCOLOR,
                         fg=TEXTCOLOR,
                         justify="center",
+                        highlightthickness=0,
+                        borderwidth=0,
                     )
 
                     input_space.bind("<FocusIn>", focus_in_handler)
                     input_space.bind("<Key>", key_pressed_handler)
 
                     input_space.grid(
-                        row=(row_index * 2) + 1, column=col_index, sticky="nsew"
+                        row=(row_index * 2) + 1,
+                        column=col_index,
+                        sticky="nsew",
+                        padx=5,
+                        pady=1,
                     )
 
                     self.input_spaces.append(input_space)
@@ -174,22 +186,25 @@ class App(tkinter.Tk):
 
         for i in range(3):
             for j in range(27):
+                f = tkinter.Frame(self.freq_table_frame, bg=TEXTCOLOR)
+
                 e = tkinter.Label(
-                    self.freq_table_frame,
+                    f,
                     text=table[i][j],
                     width=2 if j else 11,
                     bg=BGCOLOR,
                     fg=TEXTCOLOR,
                     font=("FiraMono Nerd Font", 22, "bold"),
                     anchor=tkinter.CENTER if j else tkinter.E,
-                    borderwidth=1,
+                    borderwidth=0,
                     relief="solid",
                     padx=1,
                     pady=1,
                 )
+                e.pack(expand=True, fill="both", padx=1, pady=1)
 
-                e.grid(row=i, column=j, sticky="nsew")
-                e.bind("<Button-1>", self.on_freq_label_pressed)
+                f.grid(row=i, column=j, sticky="nsew")
+                f.bind("<Button-1>", self.on_freq_label_pressed)
                 self.freq_table_labels[i][j] = e
 
     def on_freq_label_pressed(self, event: tkinter.Event):
@@ -251,7 +266,4 @@ class App(tkinter.Tk):
 
 if __name__ == "__main__":
     app = App()
-    app.display_string_with_input(
-        "SAMPLESTRING PEOPLE ANYWHERE IS THE" * 5
-    )  # Replace "Sample String" with desired input
     app.mainloop()
