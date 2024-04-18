@@ -46,6 +46,7 @@ class CipherAristocrat(CipherMonoSub):
         self.create_frequency_table()
 
     def create_cipher_text(self) -> None:
+        """Creates the cipher text and preserves non-alpha characters"""
         self.cipher_text = "".join(
             [
                 (self.mapping[char] if char in ascii_uppercase else char)

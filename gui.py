@@ -184,7 +184,7 @@ class App(tkinter.Tk):
                 idx = self.freq_table_labels[i].index(widget) - 1
 
         if idx == -1:
-            raise Exception("check sanity please")
+            raise RuntimeError("check sanity please")
 
         char_to_hl = ascii_uppercase[idx]
 

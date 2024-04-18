@@ -1,39 +1,36 @@
-from typing import Dict
-from string import ascii_uppercase
+"""This module defines utility functions for generating the cryptarithms"""
 
 import random
+from string import ascii_uppercase
+
 import requests
 
+# don't steal my api key please its free anyways :)
 API_KEY = "2wubG+f3rTK+ElC0Nwmb4w==YK0iGR3pcTfZx5Jd"
 
-QuoteType = Dict[str, str]
+QuoteType = dict[str, str]
 
 
 def get_random_quote(category="") -> QuoteType:
+    """Uses the api-ninjas api to get a random quote"""
     api_url = f"https://api.api-ninjas.com/v1/quotes?category={category}"
-    response = requests.get(api_url, headers={"X-Api-Key": API_KEY})  # type: ignore
-    if response.status_code == requests.codes.ok:
+    response = requests.get(api_url, headers={"X-Api-Key": API_KEY}, timeout=200)
+
+    if response.status_code == 200:
         return response.json()[0]
     raise requests.HTTPError("Error:", response.status_code, response.text)
 
 
 def get_quote_max_length(max_length=1000) -> QuoteType:
-    """
-    get a quote with an maximum length using Api-Ninjas
-
-    Args:
-        max_length (int, optional): the maximum length. Defaults to 1000.
-
-    Returns:
-        QuoteType: a dictionary with information about the quotes
-    """
+    """get a quote with an maximum length using Api-Ninjas"""
     while True:
         quote = get_random_quote()
         if len(quote["quote"]) <= max_length:
             return quote
 
 
-def create_alphabet_mapping() -> Dict[str, str]:
+def create_alphabet_mapping() -> dict[str, str]:
+    """Creates an alphabet-mapping where no character can map to itself"""
     available = list(ascii_uppercase)
     mapping = {}
 
