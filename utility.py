@@ -31,20 +31,15 @@ def get_quote_max_length(max_length=1000) -> QuoteType:
 
 def create_alphabet_mapping() -> dict[str, str]:
     """Creates an alphabet-mapping where no character can map to itself"""
-    available = list(ascii_uppercase)
+    letters = list(ascii_uppercase)
+    random.shuffle(letters)
     mapping = {}
-
-    for char in ascii_uppercase:
-        add_back = False
-        if char in available:
-            available.remove(char)
-            add_back = True
-
-        chosen = random.choice(available)
-        available.remove(chosen)
-        mapping[char] = chosen
-
-        if add_back:
-            available.append(char)
-
+    for i, _ in enumerate(letters):
+        next_index = (i + 1) % 26
+        if letters[next_index] == chr(65 + i):
+            letters[next_index], letters[(i + 2) % 26] = (
+                letters[(i + 2) % 26],
+                letters[next_index],
+            )
+        mapping[chr(65 + i)] = letters[next_index]
     return mapping
