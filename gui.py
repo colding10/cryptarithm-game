@@ -99,7 +99,7 @@ class App(tkinter.Tk):
                             self.update_highlighted_entries(event, typed_char, c)
                             self.move_focus(curridx, 1, True)
 
-                        self.check_win()
+                        self.after(200, self.check_win)
                         return "break"
 
                     input_space = tkinter.Entry(
@@ -242,10 +242,11 @@ class App(tkinter.Tk):
                     break
 
         if won:
-            if not ask_play_again():
+            if ask_play_again():
                 self.destroy()
+                App()
             else:
-                self.__init__()
+                self.destroy()
 
 
 if __name__ == "__main__":
