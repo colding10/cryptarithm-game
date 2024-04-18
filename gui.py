@@ -8,10 +8,11 @@ import tkinter.messagebox
 from string import ascii_uppercase
 
 CHARS_IN_ROW = 40
-BGCOLOR = "dark gray"
-FGCOLOR = "light gray"
-TEXTCOLOR = "black"
-
+BGCOLOR = "#3d2d62"
+FGCOLOR = "#97a1b5"
+TEXTCOLOR = "#c7d1d3"
+NORMAL_HL = "#fcaa8f"
+VIVID_HL = "#e89d6d"
 
 class App(tkinter.Tk):
     """This class is a subclass of tkinter.Tk, and contains functions to set up the Tk interface"""
@@ -74,7 +75,7 @@ class App(tkinter.Tk):
                         typed_char = event.char.upper()
                         curridx = self.input_spaces.index(event.widget)
                         if event.keysym_num == 65288:
-                            self.clear_yellow_entries()
+                            self.clear_highlighted_entries()
                             event.widget.delete(0, "end")
                             self.freq_table_labels[2][
                                 ascii_uppercase.index(c) + 1
@@ -85,7 +86,7 @@ class App(tkinter.Tk):
                         elif typed_char.isalpha():
                             event.widget.delete(0, "end")
                             event.widget.insert("end", typed_char)
-                            self.update_yellow_entries(event, typed_char, c)
+                            self.update_highlighted_entries(event, typed_char, c)
                             self.move_focus(curridx, 1, True)
                         return "break"
 
@@ -109,24 +110,24 @@ class App(tkinter.Tk):
                 else:
                     self.input_spaces.append(None)
 
-    def clear_yellow_entries(self):
-        """Removes the text in all yellow input spaces"""
+    def clear_highlighted_entries(self):
+        """Removes the text in all highlighted input spaces"""
         for input_space in self.input_spaces:
             if (
                 isinstance(input_space, tkinter.Entry)
-                and input_space.cget("bg") == "yellow"
+                and input_space.cget("bg") == NORMAL_HL
             ):
                 input_space.delete(0, "end")
 
-    def update_yellow_entries(self, event, typed_char, c):
-        """Add the text to all yellow entries"""
+    def update_highlighted_entries(self, event, typed_char, c):
+        """Add the text to all highlighted entries"""
         event.widget.delete(0, "end")
         event.widget.insert("end", typed_char)
-        self.clear_yellow_entries()
+        self.clear_highlighted_entries()
         for input_space in self.input_spaces:
             if (
                 isinstance(input_space, tkinter.Entry)
-                and input_space.cget("bg") == "yellow"
+                and input_space.cget("bg") == NORMAL_HL
             ):
                 input_space.delete(0, "end")
                 input_space.insert("end", typed_char)
@@ -200,16 +201,16 @@ class App(tkinter.Tk):
         """A tkinter handler that highlights others with same letter when focused on"""
         for inp in self.input_spaces:
             if isinstance(inp, tkinter.Entry):
-                inp.config({"bg": "light gray"})
+                inp.config({"bg": FGCOLOR})
 
         for i, inp in enumerate(self.input_spaces):
             if (
                 self.labels[i].cget("text").strip().upper()
                 == bound_char.strip().upper()
             ):
-                inp.config({"bg": "yellow"})
+                inp.config({"bg": NORMAL_HL})
 
-        event.widget.config({"bg": "orange"})
+        event.widget.config({"bg": VIVID_HL})
 
 
 if __name__ == "__main__":
