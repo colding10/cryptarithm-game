@@ -75,39 +75,38 @@ class App(tkinter.Tk):
                     text=char,
                     font=("FiraMono Nerd Font", 24),
                     bg=BGCOLOR,
+                    fg=TEXTCOLOR,
                     highlightthickness=0,
                     borderwidth=0,
                 )
                 label.grid(row=row_index * 2, column=col_index, sticky="nsew")
                 self.labels.append(label)
 
-                # If character is a letter, create input space
+                def focus_in_handler(event, c=char):
+                    self.on_focus_in(event, c)
+
+                def key_pressed_handler(event, c=char):
+                    typed_char = event.char.upper()
+                    curridx = self.input_spaces.index(event.widget)
+                    if event.keysym_num == 65288:
+                        self.clear_highlighted_entries()
+                        event.widget.delete(0, "end")
+                        self.freq_table_labels[2][ascii_uppercase.index(c) + 1].config(
+                            {"text": ""}
+                        )
+                    elif event.keysym_num in [65363, 65361]:
+                        direction = 1 if event.keysym_num == 65363 else -1
+                        self.move_focus(curridx, direction)
+                    elif typed_char.isalpha():
+                        event.widget.delete(0, "end")
+                        event.widget.insert("end", typed_char)
+                        self.update_highlighted_entries(event, typed_char, c)
+                        self.move_focus(curridx, 1, True)
+
+                    self.after(200, self.check_win)
+                    return "break"
+
                 if char.isalpha():
-
-                    def focus_in_handler(event, c=char):
-                        self.on_focus_in(event, c)
-
-                    def key_pressed_handler(event, c=char):
-                        typed_char = event.char.upper()
-                        curridx = self.input_spaces.index(event.widget)
-                        if event.keysym_num == 65288:
-                            self.clear_highlighted_entries()
-                            event.widget.delete(0, "end")
-                            self.freq_table_labels[2][
-                                ascii_uppercase.index(c) + 1
-                            ].config({"text": ""})
-                        elif event.keysym_num in [65363, 65361]:
-                            direction = 1 if event.keysym_num == 65363 else -1
-                            self.move_focus(curridx, direction)
-                        elif typed_char.isalpha():
-                            event.widget.delete(0, "end")
-                            event.widget.insert("end", typed_char)
-                            self.update_highlighted_entries(event, typed_char, c)
-                            self.move_focus(curridx, 1, True)
-
-                        self.after(200, self.check_win)
-                        return "break"
-
                     input_space = tkinter.Entry(
                         self.text_frame,
                         width=1,
@@ -121,18 +120,28 @@ class App(tkinter.Tk):
 
                     input_space.bind("<FocusIn>", focus_in_handler)
                     input_space.bind("<Key>", key_pressed_handler)
-
-                    input_space.grid(
-                        row=(row_index * 2) + 1,
-                        column=col_index,
-                        sticky="nsew",
-                        padx=5,
-                        pady=1,
+                else:
+                    input_space = tkinter.Label(
+                        self.text_frame,
+                        width=1,
+                        font=("FiraMono Nerd Font", 24),
+                        bg=BGCOLOR,
+                        fg=TEXTCOLOR,
+                        justify="center",
+                        highlightthickness=0,
+                        borderwidth=0,
+                        text=char,
                     )
 
-                    self.input_spaces.append(input_space)
-                else:
-                    self.input_spaces.append(None)
+                input_space.grid(
+                    row=(row_index * 2) + 1,
+                    column=col_index,
+                    sticky="nsew",
+                    padx=5,
+                    pady=1,
+                )
+
+                self.input_spaces.append(input_space)
 
     def clear_highlighted_entries(self):
         """Removes the text in all highlighted input spaces"""
