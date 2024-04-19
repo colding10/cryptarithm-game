@@ -172,7 +172,7 @@ class App(tkinter.Tk):
         """Moves the focus in one direction or another"""
         for i in range(
             curridx + direction,
-            0 if direction == -1 else len(self.input_spaces),
+            -1 if direction == -1 else len(self.input_spaces),
             direction,
         ):
             if isinstance(self.input_spaces[i], tkinter.Entry) and (
