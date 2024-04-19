@@ -17,6 +17,10 @@ TEXTCOLOR = "#424874"
 NORMAL_HL = "#fcaa8f"
 VIVID_HL = "#e89d6d"
 
+FGCOLOR, BGCOLOR, VIVID_HL, NORMAL_HL, TEXTCOLOR = map(
+    lambda s: "#" + s, ["074f57", "077187", "74a57f", "9ece9a", "e4c5af"]
+)
+
 
 class App(tkinter.Tk):
     """This class is a subclass of tkinter.Tk, and contains functions to set up the Tk interface"""
