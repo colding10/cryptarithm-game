@@ -18,7 +18,15 @@ NORMAL_HL = "#fcaa8f"
 VIVID_HL = "#e89d6d"
 
 FGCOLOR, BGCOLOR, VIVID_HL, NORMAL_HL, TEXTCOLOR = map(
-    lambda s: "#" + s, ["074f57", "077187", "74a57f", "9ece9a", "e4c5af"]
+    lambda s: "#" + s, reversed(["074f57", "077187", "74a57f", "9ece9a", "e4c5af"])
+)
+
+FGCOLOR, BGCOLOR, VIVID_HL, NORMAL_HL, TEXTCOLOR = map(
+    lambda s: "#" + s, (["515a47", "d7be82", "7a4419", "755c1b", "400406"])
+)
+
+FGCOLOR, BGCOLOR, VIVID_HL, NORMAL_HL, TEXTCOLOR = map(
+    lambda s: "#" + s, reversed(["d1faff", "9bd1e5", "6a8eae", "57a773", "157145"])
 )
 
 
